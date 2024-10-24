@@ -30,7 +30,13 @@ jobs:
       with:
         path: ~/.android
         key: android-sdk-${{ runner.os }}-api-30
-
+    
+    - name: Cache NDK
+      uses: actions/cache@v3
+      with:
+        path: ~/.android/ndk
+        key: android-ndk-${{ runner.os }}-r28.0.12433566
+    
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
