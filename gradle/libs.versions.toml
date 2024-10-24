@@ -1,0 +1,37 @@
+[versions]
+ackpineCore = "0.7.6"
+agp = "8.5.2"
+apksig = "8.8.0-alpha05"
+bcpkixJdk15to18 = "1.68"
+core = "1.13.1"
+filepicker = "0.2.5"
+fileutils = "fcb1b0c0ef"
+gradle = "8.8.0-alpha05"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+constraintlayout = "2.1.4"
+zip4j = "2.11.5"
+
+[libraries]
+ackpine-core = { module = "ru.solrudev.ackpine:ackpine-core", version.ref = "ackpineCore" }
+apksig = { module = "com.android.tools.build:apksig", version.ref = "apksig" }
+bcpkix-jdk15to18 = { module = "org.bouncycastle:bcpkix-jdk15to18", version.ref = "bcpkixJdk15to18" }
+bcprov-jdk15to18 = { module = "org.bouncycastle:bcprov-jdk15to18", version.ref = "bcpkixJdk15to18" }
+build-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+core = { module = "androidx.core:core", version.ref = "core" }
+filepicker = { module = "io.github.chochanaresh:filepicker", version.ref = "filepicker" }
+fileutils = { module = "com.github.sunilpaulmathew.sCommon:fileutils", version.ref = "fileutils" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+zip4j = { module = "net.lingala.zip4j:zip4j", version.ref = "zip4j" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+
