@@ -38,7 +38,7 @@ jobs:
       run: sdkmanager --install 'ndk;28.0.12433566' --channel=3
     - name: Delete Assertion
       run: sed -i '66d' ${ANDROID_SDK_ROOT}/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
-    - name: Pull Git lfs
+    - name: Pull LFS files
       run: git lfs pull
     - name: Build with Gradle
       run: ./gradlew build
