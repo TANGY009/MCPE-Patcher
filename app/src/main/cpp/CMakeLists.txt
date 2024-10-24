@@ -23,8 +23,9 @@ project("mcpepatcher")
 # System.loadLibrary() and pass the name of the library defined here;
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
-set(CAPSTONE_DIR "C:\\Users\\Zeyro\\OneDrive\\Desktop\\libraries\\capstone")
-set(LIEF_DIR "C:\\Users\\Zeyro\\OneDrive\\Desktop\\libraries\\test\\lief\\build-android")
+set(LIBRARIES ${CMAKE_SOURCE_DIR}/../cpp/libraries)
+set(CAPSTONE_DIR ${LIBRARIES}/capstone)
+set(LIEF_DIR ${LIBRARIES}/LIEF/build-android)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(${CMAKE_PROJECT_NAME} SHARED
