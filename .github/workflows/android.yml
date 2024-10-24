@@ -42,3 +42,7 @@ jobs:
       run: git lfs pull
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-debug
