@@ -34,9 +34,9 @@ jobs:
       run: yes | sdkmanager --licenses
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v1
-    - name: Define NDK_HOME
-      run: echo "NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+    - name: Install NDK (Side by side) 28.0.12433566 v.28.0.12433566 rc1
+      run: sdkmanager --install 'ndk;28.0.12433566' --channel=3
     - name: delete assertion
-      run: sed -i '66d' $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
+      run: sed -i '66d' ${ANDROID_SDK_ROOT}/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
     - name: Build with Gradle
       run: ./gradlew build
