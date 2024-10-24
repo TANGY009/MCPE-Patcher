@@ -34,7 +34,7 @@ jobs:
     - name: Cache NDK
       uses: actions/cache@v3
       with:
-        path: ~/.android/ndk
+        path: ${ANDROID_SDK_ROOT}/ndk/28.0.12433566
         key: android-ndk-${{ runner.os }}-r28.0.12433566
     
     - name: Set up JDK 21
