@@ -72,8 +72,8 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: sed -i '66d' ${ANDROID_SDK_ROOT}/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
 
-    - name: Pull LFS files
-      run: git lfs pull
+    - name: Get lib
+      run: wget http://104.254.244.177/libLIEF.a && mv libLIEF.a app/src/main/cpp/libraries/LIEF/build-android
 
     - name: Make Gradlew Executable
       run: chmod +x gradlew
