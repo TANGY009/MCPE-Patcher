@@ -31,15 +31,27 @@ jobs:
       with:
         path: ${{ env.ANDROID_SDK_ROOT }}
         key: android-sdk-${{ runner.os }}
+        restore-keys: |
+          android-sdk-${{ runner.os }}
+
+    - name: Cache JDK
+      id: cache-jdk
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.JAVA_HOME }}
+        key: jdk-${{ runner.os }}
+        restore-keys: |
+          jdk-${{ runner.os }}
 
     - name: Set up JDK 21
+      if: steps.cache-jdk.outputs.cache-hit != 'true'
       uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: 21
         cache: gradle
 
-    - name: Set up Android SDK if not cached yet
+    - name: Set up Android SDK
       if: steps.cache.outputs.cache-hit != 'true'
       uses: android-actions/setup-android@v2
       with:
@@ -52,11 +64,11 @@ jobs:
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v1
 
-    - name: Install NDK Manually if not cached yet
+    - name: Install NDK Manually
       if: steps.cache.outputs.cache-hit != 'true'
       run: sdkmanager --install "ndk;28.0.12433566"
 
-    - name: Optimize NDK for unique_ptr
+    - name: Remove that one annoying unique_ptr.h assertion
       if: steps.cache.outputs.cache-hit != 'true'
       run: sed -i '66d' ${ANDROID_SDK_ROOT}/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
 
