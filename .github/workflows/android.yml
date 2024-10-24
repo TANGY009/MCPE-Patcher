@@ -26,12 +26,14 @@ jobs:
           gradle-${{ runner.os }}-
 
     - name: Cache Android SDK
+      id: cache
       uses: actions/cache@v3
       with:
         path: ~/.android
         key: android-sdk-${{ runner.os }}-api-30
     
     - name: Cache NDK
+      id: ndk-cache
       uses: actions/cache@v3
       with:
         path: ${{ env.ANDROID_SDK_ROOT }}/ndk
@@ -45,7 +47,7 @@ jobs:
         cache: gradle
 
     - name: Set up Android SDK if not cached yet
-      if: steps.android-cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       uses: android-actions/setup-android@v2
       with:
         api-level: 30
