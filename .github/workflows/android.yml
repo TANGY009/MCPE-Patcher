@@ -29,7 +29,7 @@ jobs:
       id: cache
       uses: actions/cache@v3
       with:
-        path: ${{ env.ANDROID_SDK_ROOT }}
+        path: /usr/local/lib/android/sdk
         key: android-sdk-${{ runner.os }}
         restore-keys: |
           android-sdk-${{ runner.os }}
@@ -38,7 +38,7 @@ jobs:
       id: cache-jdk
       uses: actions/cache@v3
       with:
-        path: ${{ env.JAVA_HOME }}
+        path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.4-7/x64/
         key: jdk-${{ runner.os }}
         restore-keys: |
           jdk-${{ runner.os }}
@@ -67,9 +67,6 @@ jobs:
     - name: Install NDK Manually
       if: steps.cache.outputs.cache-hit != 'true'
       run: sdkmanager --install "ndk;28.0.12433566"
-
-    - name: Print paths
-      run: echo ${JAVA_HOME} && echo ${ANDROID_SDK_ROOT}
 
     - name: Remove that one annoying unique_ptr.h assertion
       if: steps.cache.outputs.cache-hit != 'true'
