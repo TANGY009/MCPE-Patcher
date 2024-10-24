@@ -24,7 +24,7 @@ project("mcpepatcher")
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
 set(LIBRARIES ${CMAKE_SOURCE_DIR}/../cpp/libraries)
-set(CAPSTONE_DIR ${LIBRARIES}/capstone)
+set(CAPSTONE_DIR ${LIBRARIES}/Capstone)
 set(LIEF_DIR ${LIBRARIES}/LIEF/build-android)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
