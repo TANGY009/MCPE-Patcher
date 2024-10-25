@@ -25,7 +25,21 @@ jobs:
         restore-keys: |
           gradle-${{ runner.os }}-
 
+    - name: Cache JDK
+      id: cache-jdk
+      uses: actions/cache@v4
+      with:
+        path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.4-7/x64/
+        key: jdk-${{ runner.os }}-21
+        restore-keys: |
+          jdk-${{ runner.os }}-21
+
+    - name: Set JDK env path
+      if: steps.cache-jdk.outputs.cache-hit == 'true'
+      run: 
+      
     - name: Set up JDK 21
+      if: steps.cache-jdk.outputs.cache-hit != 'true'
       uses: actions/setup-java@v4
       with:
         distribution: temurin
@@ -45,7 +59,6 @@ jobs:
       run: sdkmanager --install "ndk;28.0.12433566"
 
     - name: Remove that one annoying unique_ptr.h assertion
-      if: steps.cache.outputs.cache-hit != 'true'
       run: sed -i '66d' ${ANDROID_SDK_ROOT}/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
 
     - name: Get lib
