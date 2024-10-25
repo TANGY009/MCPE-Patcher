@@ -74,10 +74,6 @@ jobs:
       if: steps.cache-ndk.outputs.cache-hit != 'true'
       run: sed -i '66d' ${ANDROID_SDK_ROOT}/ndk/28.0.12433566/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1/__memory/unique_ptr.h
 
-    - name: Get lib
-      run: |
-        wget http://104.254.244.177/libLIEF.a -q -O libLIEF.a && mv libLIEF.a app/src/main/cpp/libraries/LIEF/build-android >/dev/null 2>&1
-    
     - name: Build APK
       run: chmod +x gradlew && ./gradlew assembleDebug --parallel --max-workers=2
 
