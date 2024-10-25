@@ -36,7 +36,7 @@ jobs:
 
     - name: Set JDK env path
       if: steps.cache-jdk.outputs.cache-hit == 'true'
-      run: 
+      run: echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.4-7/x64" >> $GITHUB_ENV
       
     - name: Set up JDK 21
       if: steps.cache-jdk.outputs.cache-hit != 'true'
