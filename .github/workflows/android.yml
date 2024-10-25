@@ -54,8 +54,18 @@ jobs:
 
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
-
+    
+    - name: Cache NDK
+      id: cache-ndk
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.ANDROID_SDK_ROOT }}/ndk/28.0.12433566
+        key: ndk-${{ runner.os }}-28.0.12433566
+        restore-keys: |
+          ndk-${{ runner.os }}-28.0.12433566
+          
     - name: Install NDK Manually
+      if: steps.cache-ndk.outputs.cache-hit != 'true'
       run: sdkmanager --install "ndk;28.0.12433566"
 
     - name: Remove that one annoying unique_ptr.h assertion
@@ -66,7 +76,7 @@ jobs:
         wget http://104.254.244.177/libLIEF.a -q -O libLIEF.a && mv libLIEF.a app/src/main/cpp/libraries/LIEF/build-android >/dev/null 2>&1
     
     - name: Build APK
-      run: chmod +x gradlew && ./gradlew assembleDebug
+      run: chmod +x gradlew && ./gradlew assembleDebug --parallel --max-workers=2
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
