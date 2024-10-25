@@ -27,7 +27,7 @@ jobs:
 
     - name: Cache Android SDK
       id: cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /usr/local/lib/android/sdk
         key: android-sdk-${{ runner.os }}
@@ -36,7 +36,7 @@ jobs:
 
     - name: Cache JDK
       id: cache-jdk
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.4-7/x64/
         key: jdk-${{ runner.os }}
@@ -53,16 +53,13 @@ jobs:
 
     - name: Set up Android SDK
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: android-actions/setup-android@v2
-      with:
-        api-level: 30
-        build-tools: 30.0.3
+      uses: android-actions/setup-android@v3
 
     - name: Accept Licenses
       run: yes | sdkmanager --licenses
 
     - name: Validate Gradle Wrapper
-      uses: gradle/wrapper-validation-action@v1
+      uses: gradle/wrapper-validation-action@v2
 
     - name: Install NDK Manually
       if: steps.cache.outputs.cache-hit != 'true'
@@ -79,7 +76,7 @@ jobs:
       run: chmod +x gradlew && ./gradlew assembleDebug
 
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-debug
         path: app/build/outputs/apk/debug/app-debug.apk
