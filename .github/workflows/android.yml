@@ -16,6 +16,7 @@ jobs:
         submodules: true
 
     - name: Cache Gradle
+      id: cache-gradle
       uses: actions/cache@v4
       with:
         path: |
@@ -53,6 +54,7 @@ jobs:
       run: yes | sdkmanager --licenses
 
     - name: Validate Gradle Wrapper
+      if: steps.cache-gradle.outputs.cache-hit != 'true'
       uses: gradle/wrapper-validation-action@v2
     
     - name: Cache NDK
@@ -63,7 +65,7 @@ jobs:
         key: ndk-${{ runner.os }}-28.0.12433566
         restore-keys: |
           ndk-${{ runner.os }}-28.0.12433566
-          
+
     - name: Install NDK Manually
       if: steps.cache-ndk.outputs.cache-hit != 'true'
       run: sdkmanager --install "ndk;28.0.12433566"
