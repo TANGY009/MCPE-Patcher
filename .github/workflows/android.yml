@@ -25,26 +25,7 @@ jobs:
         restore-keys: |
           gradle-${{ runner.os }}-
 
-    - name: Cache Android SDK
-      id: cache
-      uses: actions/cache@v4
-      with:
-        path: /usr/local/lib/android/sdk
-        key: android-sdk-${{ runner.os }}
-        restore-keys: |
-          android-sdk-${{ runner.os }}
-
-    - name: Cache JDK
-      id: cache-jdk
-      uses: actions/cache@v4
-      with:
-        path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.4-7/x64/
-        key: jdk-${{ runner.os }}
-        restore-keys: |
-          jdk-${{ runner.os }}
-
     - name: Set up JDK 21
-      if: steps.cache-jdk.outputs.cache-hit != 'true'
       uses: actions/setup-java@v4
       with:
         distribution: temurin
@@ -52,7 +33,6 @@ jobs:
         cache: gradle
 
     - name: Set up Android SDK
-      if: steps.cache.outputs.cache-hit != 'true'
       uses: android-actions/setup-android@v3
 
     - name: Accept Licenses
@@ -62,7 +42,6 @@ jobs:
       uses: gradle/wrapper-validation-action@v2
 
     - name: Install NDK Manually
-      if: steps.cache.outputs.cache-hit != 'true'
       run: sdkmanager --install "ndk;28.0.12433566"
 
     - name: Remove that one annoying unique_ptr.h assertion
