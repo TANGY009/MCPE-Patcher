@@ -5,7 +5,7 @@ tasks.named("preBuild") {
     doFirst {
         println("Fetch library")
         exec {
-            commandLine "curl", "-L", "-s", "http://104.254.244.177/libLIEF.a", "-o", "src/main/cpp/libraries/LIEF/build-android/libLIEF.a"
+            commandLine "curl", "-L", "-s", "https://github.com/TANGY009/MCPE-Patcher/releases/download/0.15.1/libLIEF.a", "-o", "src/main/cpp/libraries/LIEF/build-android/libLIEF.a"
         }
     }
 }
