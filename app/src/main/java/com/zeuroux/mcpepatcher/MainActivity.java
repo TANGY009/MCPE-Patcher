@@ -1,5 +1,8 @@
 package com.zeuroux.mcpepatcher;
 
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
@@ -426,6 +429,12 @@ public class MainActivity extends AppCompatActivity {
             ProgressMonitor progressMonitor = minecraft.getProgressMonitor();
             while (!progressMonitor.getState().equals(ProgressMonitor.State.READY)) {
                 LogIt("Progress", progressMonitor.getPercentDone() + "%");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LogIt("Error", "Thread interrupted while waiting for extraction to complete.");
+                }
             }
             Files.move(getPath("lib/arm64-v8a/libminecraftpe.so"), outputPath);
             clearDirectory(new File(getPath("lib").toString()));
@@ -435,7 +444,15 @@ public class MainActivity extends AppCompatActivity {
     }
     public void signApk(String apkPath, String signedApkPath) {
         try {
-            KeyStore keystore = KeyStore.getInstance("PKCS12");
+            KeyStore keystore;
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                Security.removeProvider("BC");
+                Security.addProvider(new BouncyCastleProvider());
+                keystore = KeyStore.getInstance("PKCS12", "BC");
+                LogIt("Info", "Using BouncyCastle for signing on Android 10.");
+            } else {
+                keystore = KeyStore.getInstance("PKCS12");
+            }
             InputStream keystoreInputStream = getAssets().open("bhm.jks");
             File tempKeystoreFile = new File(getCacheDir(), "bhm.jks");
             try (FileOutputStream out = new FileOutputStream(tempKeystoreFile)) {
@@ -450,7 +467,10 @@ public class MainActivity extends AppCompatActivity {
             keystore.load(Files.newInputStream(tempKeystoreFile.toPath()), "build-height".toCharArray());
             String alias = "debug";
             X509Certificate certificate = (X509Certificate) keystore.getCertificate(alias);
-            ApkSigner.SignerConfig signerConfig = new ApkSigner.SignerConfig.Builder(alias, new KeyConfig.Jca((PrivateKey) keystore.getKey(alias, "build-height".toCharArray())), Collections.singletonList(certificate)).build();
+            PrivateKey privateKey = (PrivateKey) keystore.getKey(alias, "build-height".toCharArray());
+            ApkSigner.SignerConfig signerConfig = new ApkSigner.SignerConfig.Builder(
+                alias, new KeyConfig.Jca(privateKey), Collections.singletonList(certificate)
+            ).build();
             FileInputStream apkInputStream = new FileInputStream(outputDirectory + apkPath);
             ApkSigner.Builder builder = new ApkSigner.Builder(Collections.singletonList(signerConfig));
             builder.setInputApk(DataSources.asDataSource(apkInputStream.getChannel()));
@@ -462,19 +482,14 @@ public class MainActivity extends AppCompatActivity {
             builder.setV4SigningEnabled(true);
             builder.setV4SignatureOutputFile(new File(outputDirectory, "v4_signature"));
             ApkSigner signer = builder.build();
-            new Thread(() -> {
-                try {
-                    signer.sign();
-                } catch (Exception e) {
-                    LogIt("Error.", "Error Signing:" + e.getLocalizedMessage());
-                }
-            }).start();
+            signer.sign();
+            LogIt("Info", "✅ APK signing completed successfully.");
             while (signedApk.length() < apkLength) {
                 LogIt("Progress", (apkInputStream.getChannel().position() * 100 / apkLength) + "%");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LogIt("Error.", "Error Signing:" + e.getLocalizedMessage());
+            LogIt("Error.", "❌ Error Signing:" + e.getLocalizedMessage());
         }
     }
     public Path getPath(String path) {
@@ -500,19 +515,31 @@ public class MainActivity extends AppCompatActivity {
     }
     public void replaceLib(ZipFile minecraft,Path libpath){
         try {
-            minecraft.removeFile("lib/arm64-v8a/libminecraftpe.so");
             ProgressMonitor progressMonitor = minecraft.getProgressMonitor();
             while (!progressMonitor.getState().equals(ProgressMonitor.State.READY)) {
                 LogIt("Progress", progressMonitor.getPercentDone() + "%");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LogIt("Error", "Thread interrupted while waiting for Zip4j to be ready.");
+                }
+            }
+            minecraft.removeFile("lib/arm64-v8a/libminecraftpe.so");
+            while (!progressMonitor.getState().equals(ProgressMonitor.State.READY)) {
+                LogIt("Progress", progressMonitor.getPercentDone() + "%");
+                Thread.sleep(500);
             }
             ZipParameters parameters = new ZipParameters();
             parameters.setFileNameInZip("lib/arm64-v8a/libminecraftpe.so");
             minecraft.addFile(libpath.toFile(), parameters);
             while (!progressMonitor.getState().equals(ProgressMonitor.State.READY)) {
                 LogIt("Progress", progressMonitor.getPercentDone() + "%");
+                Thread.sleep(500);
             }
-        } catch (ZipException e) {
-            LogIt("Error.", "Error replacing libminecraftpe.so:" + e.getLocalizedMessage());
+            LogIt("Info", "Successfully replaced libminecraftpe.so!");
+        } catch (ZipException | InterruptedException e) {
+            LogIt("Error.", "Error replacing libminecraftpe.so: " + e.getLocalizedMessage());
         }
     }
     public void addFile(ZipFile minecraft, Path file){
